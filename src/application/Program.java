@@ -1,12 +1,10 @@
 package application;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Scanner;
 
-import model.entities.Reservation;
+import model.entities.Account;
 import model.exceptions.DomainException;
 
 public class Program {
@@ -16,37 +14,42 @@ public class Program {
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
 		try {
-			System.out.print("Room number: ");
-			int number = sc.nextInt();
-			System.out.println("Check-in date (dd/MM/yyyy): ");
-			Date checkIn = sdf.parse(sc.next());
-			System.out.println("Check-out date (dd/MM/yyyy): ");
-			Date checkOut = sdf.parse(sc.next());
+		System.out.println("Enter account data: ");
+		System.out.println();
+		System.out.print("Number: ");
+		Integer number = sc.nextInt();
+		sc.nextLine();
+		System.out.print("Holder: ");
+		String holder = sc.nextLine();
+		System.out.print("Initial balance: ");
+		Double balance = sc.nextDouble();
+		sc.nextLine();
+		System.out.print("Withdraw limit: ");
+		Double withdrawLimit = sc.nextDouble();
+		sc.nextLine();
 
-			Reservation reservation = new Reservation(number, checkIn, checkOut);
-			System.out.println("Reservation: " + reservation);
+		Account account = new Account(number, holder, balance, withdrawLimit);
 
-			System.out.println();
-			System.out.println("Enter data to update the reservation: ");
-			System.out.println("Check-in date (dd/MM/yyyy): ");
-			checkIn = sdf.parse(sc.next());
-			System.out.println("Check-out date (dd/MM/yyyy): ");
-			checkOut = sdf.parse(sc.next());
-
-			reservation.updatedDates(checkIn, checkOut);
-			System.out.println("Reservation: " + reservation);
-		} catch (ParseException e) {
-			System.out.println("Invalid date format");
-		} catch (DomainException e) {
-			System.out.println("Error in reservation: " + e.getMessage());
+		System.out.print("Enter amount for withdraw: ");
+		Double amount = sc.nextDouble();
+		sc.nextLine();
+		account.withdraw(amount);
+		System.out.println("-----------------------------------------------------------");
+		System.out.println(account);
+		System.out.println("------------------------------------------------------------");
+		System.out.println("Do you want to make another withdrawal?");
+		char response = sc.next().charAt(0);
+		account.condition(response);
 		}
-		catch(RuntimeException e) {
-			System.out.println("Unexpected error");
+		catch (DomainException e) {
+			System.out.println("Withdraw error: " + e.getMessage());
 		}
-
+		catch (Exception e) {
+			final String BOLD = "\033[1m";
+			final String RESET = "\033[0m";
+			System.out.println( BOLD + "Unexpected error." + RESET);
+		}
 		sc.close();
 	}
 }
